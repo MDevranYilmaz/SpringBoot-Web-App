@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes tree-sway {
+
+  0%,
+  100% {
+    transform: translateX(-50%) rotate(0deg);
+  }
+
+  50% {
+    transform: translateX(-50%) rotate(2deg);
+  }
+}
+
+@keyframes leaf-cycle {
+  0% {
+    opacity: 1;
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+
+  25% {
+    opacity: 0.7;
+    transform: translateY(10px) rotate(45deg) scale(0.9);
+  }
+
+  50% {
+    opacity: 0;
+    transform: translateY(50px) rotate(180deg) scale(0.3);
+  }
+
+  75% {
+    opacity: 0.3;
+    transform: translateY(20px) rotate(270deg) scale(0.6);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0px) rotate(360deg) scale(1);
+  }
+}
+
+/* Animation utility classes */
+.animate-tree-sway {
+  animation: tree-sway 3s ease-in-out infinite;
+}
+
+.animate-leaf-cycle {
+  animation: leaf-cycle 4s ease-in-out infinite;
+}
+
+/* Custom component styles */
+.bg-nature-gradient {
+  background: linear-gradient(135deg, #14b8a6, #0d9488, #059669);
+}
+
+.nature-input {
+  background-color: #0f766e;
+  border: none;
+  border-radius: 9999px;
+  color: white;
+  padding: 12px 16px;
+  padding-left: 48px;
+}
+
+.nature-input::placeholder {
+  color: #5eead4;
+}
+
+.nature-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #14b8a6;
+  background-color: #0d9488;
+}
