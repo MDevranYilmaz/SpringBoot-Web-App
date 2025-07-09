@@ -1,4 +1,4 @@
-package com.RealProject.UserManagementSystem.service;
+package com.Alert.AnalyticsReportingSystem.AIService;
 
 import java.util.Date;
 import java.util.HashMap;
