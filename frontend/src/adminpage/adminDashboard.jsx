@@ -1,21 +1,23 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { LogOut, Users } from "lucide-react"
+import { LogOut, Users, BarChart3 } from "lucide-react"
 import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
 import { Badge } from "../components/ui/badge"
+import AnalyticsComponent from "../components/AnalyticsComponent"
 
 const AdminDashboard = () => {
     const [applications, setApplications] = useState([])
     const [loading, setLoading] = useState(true)
     const [search, setSearch] = useState("")
+    const [activeTab, setActiveTab] = useState("applications") // New tab state
 
     useEffect(() => {
         const fetchApplications = async () => {
             try {
                 const token = localStorage.getItem('authToken');
-                const response = await fetch("http://localhost:8080/api/v1/hr/admin/all-applications", {
+                const response = await fetch("http://localhost:8080/api/gateway/hr/admin/all-applications", {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -42,7 +44,7 @@ const AdminDashboard = () => {
     const handleApprove = async (id) => {
         try {
             const token = localStorage.getItem('authToken');
-            const response = await fetch("http://localhost:8080/api/v1/hr/admin/review-application", {
+            const response = await fetch("http://localhost:8080/api/gateway/hr/admin/review-application", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -68,7 +70,7 @@ const AdminDashboard = () => {
     const handleReject = async (id) => {
         try {
             const token = localStorage.getItem('authToken');
-            const response = await fetch("http://localhost:8080/api/v1/hr/admin/review-application", {
+            const response = await fetch("http://localhost:8080/api/gateway/hr/admin/review-application", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -201,132 +203,172 @@ const AdminDashboard = () => {
             </div>
 
             <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-                <div className="mb-4">
-                    <Input
-                        type="text"
-                        placeholder="Search applications..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="pl-10 bg-white/90 backdrop-blur-sm border-white/20 focus:ring-2 focus:ring-emerald-500"
-                    />
-                </div>
-                <div className="bg-white/90 backdrop-blur-sm rounded-lg overflow-hidden">
-                    <div className="px-6 py-4 border-b border-gray-200">
-                        <h3 className="text-lg font-semibold text-gray-900">Applications ({filteredApplications.length})</h3>
+                {/* Tab Navigation */}
+                <div className="mb-6">
+                    <div className="border-b border-gray-200 bg-white/90 backdrop-blur-sm rounded-t-lg">
+                        <nav className="-mb-px flex space-x-8 px-6">
+                            <button
+                                onClick={() => setActiveTab("applications")}
+                                className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === "applications"
+                                        ? "border-emerald-500 text-emerald-600"
+                                        : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                    }`}
+                            >
+                                <Users className="w-4 h-4 inline mr-2" />
+                                Applications
+                            </button>
+                            <button
+                                onClick={() => setActiveTab("analytics")}
+                                className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === "analytics"
+                                        ? "border-emerald-500 text-emerald-600"
+                                        : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                    }`}
+                            >
+                                <BarChart3 className="w-4 h-4 inline mr-2" />
+                                Analytics
+                            </button>
+                        </nav>
                     </div>
-
-                    {filteredApplications.length === 0 ? (
-                        <div className="text-center py-8">
-                            <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                            <p className="text-gray-500">No applications found</p>
-                        </div>
-                    ) : (
-                        <div className="divide-y divide-gray-200">
-                            {filteredApplications.map((application) => (
-                                <div key={application.id} className="px-6 py-6 hover:bg-gray-50 transition-colors">
-                                    <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
-                                        <div className="flex-1">
-                                            {/* Main Info */}
-                                            <div className="flex items-center space-x-4 mb-3">
-                                                <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
-                                                    <Users className="w-6 h-6 text-emerald-600" />
-                                                </div>
-                                                <div>
-                                                    <h4 className="text-lg font-semibold text-gray-900">
-                                                        {application.firstName} {application.lastName}
-                                                    </h4>
-                                                    <p className="text-sm text-gray-600">{application.title || 'No title specified'}</p>
-                                                </div>
-                                                <div>{getStatusBadge(application.status)}</div>
-                                            </div>
-
-                                            {/* Detailed Information Grid */}
-                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                                                <div className="space-y-2">
-                                                    <div className="flex items-center text-gray-600">
-                                                        <span className="font-medium">📧 Email:</span>
-                                                        <span className="ml-2">{application.email}</span>
-                                                    </div>
-                                                    <div className="flex items-center text-gray-600">
-                                                        <span className="font-medium">👤 Username:</span>
-                                                        <span className="ml-2">@{application.username}</span>
-                                                    </div>
-                                                </div>
-
-                                                <div className="space-y-2">
-                                                    <div className="flex items-center text-gray-600">
-                                                        <span className="font-medium">🏢 Department:</span>
-                                                        <span className="ml-2">{application.department || 'Not specified'}</span>
-                                                    </div>
-                                                    <div className="flex items-center text-gray-600">
-                                                        <span className="font-medium">📅 Applied:</span>
-                                                        <span className="ml-2">
-                                                            {application.submittedAt ? new Date(application.submittedAt).toLocaleDateString() : 'Unknown'}
-                                                        </span>
-                                                    </div>
-                                                </div>
-
-                                                <div className="space-y-2">
-                                                    <div className="flex items-center text-gray-600">
-                                                        <span className="font-medium">👥 Submitted by:</span>
-                                                        <span className="ml-2">{application.submittedByHR || 'Unknown'}</span>
-                                                    </div>
-                                                    <div className="flex items-center text-gray-600">
-                                                        <span className="font-medium">🆔 ID:</span>
-                                                        <span className="ml-2">#{application.id}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/* Notes Section */}
-                                            {application.notes && (
-                                                <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                                                    <span className="font-medium text-gray-700">📝 Notes:</span>
-                                                    <p className="text-gray-600 mt-1">{application.notes}</p>
-                                                </div>
-                                            )}
-
-                                            {/* Review Notes (if any) */}
-                                            {application.rejectionReason && (
-                                                <div className="mt-3 p-3 bg-red-50 rounded-lg">
-                                                    <span className="font-medium text-red-700">❌ Rejection Reason:</span>
-                                                    <p className="text-red-600 mt-1">{application.rejectionReason}</p>
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        {/* Action Buttons */}
-                                        <div className="flex flex-col space-y-2 lg:ml-4">
-                                            {(application.status === 'PENDING' || application.status?.toString().toUpperCase() === 'PENDING') ? (
-                                                <>
-                                                    <Button
-                                                        size="sm"
-                                                        className="bg-emerald-600 hover:bg-emerald-700 text-white min-w-[100px]"
-                                                        onClick={() => handleApprove(application.id)}
-                                                    >
-                                                        ✅ Approve
-                                                    </Button>
-                                                    <Button
-                                                        size="sm"
-                                                        variant="outline"
-                                                        className="border-red-300 text-red-600 hover:bg-red-50 min-w-[100px]"
-                                                        onClick={() => handleReject(application.id)}
-                                                    >
-                                                        ❌ Reject
-                                                    </Button>
-                                                </>
-                                            ) : (
-                                                <span className="text-sm text-gray-500 italic px-4 py-2 bg-gray-100 rounded-md text-center">
-                                                    📋 Already reviewed
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
                 </div>
+
+                {/* Tab Content */}
+                {activeTab === "applications" && (
+                    <>
+                        <div className="mb-4">
+                            <Input
+                                type="text"
+                                placeholder="Search applications..."
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                className="pl-10 bg-white/90 backdrop-blur-sm border-white/20 focus:ring-2 focus:ring-emerald-500"
+                            />
+                        </div>
+                        <div className="bg-white/90 backdrop-blur-sm rounded-lg overflow-hidden">
+                            <div className="px-6 py-4 border-b border-gray-200">
+                                <h3 className="text-lg font-semibold text-gray-900">Applications ({filteredApplications.length})</h3>
+                            </div>
+
+                            {filteredApplications.length === 0 ? (
+                                <div className="text-center py-8">
+                                    <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                                    <p className="text-gray-500">No applications found</p>
+                                </div>
+                            ) : (
+                                <div className="divide-y divide-gray-200">
+                                    {filteredApplications.map((application) => (
+                                        <div key={application.id} className="px-6 py-6 hover:bg-gray-50 transition-colors">
+                                            <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+                                                <div className="flex-1">
+                                                    {/* Main Info */}
+                                                    <div className="flex items-center space-x-4 mb-3">
+                                                        <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
+                                                            <Users className="w-6 h-6 text-emerald-600" />
+                                                        </div>
+                                                        <div>
+                                                            <h4 className="text-lg font-semibold text-gray-900">
+                                                                {application.firstName} {application.lastName}
+                                                            </h4>
+                                                            <p className="text-sm text-gray-600">{application.title || 'No title specified'}</p>
+                                                        </div>
+                                                        <div>{getStatusBadge(application.status)}</div>
+                                                    </div>
+
+                                                    {/* Detailed Information Grid */}
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+                                                        <div className="space-y-2">
+                                                            <div className="flex items-center text-gray-600">
+                                                                <span className="font-medium">📧 Email:</span>
+                                                                <span className="ml-2">{application.email}</span>
+                                                            </div>
+                                                            <div className="flex items-center text-gray-600">
+                                                                <span className="font-medium">👤 Username:</span>
+                                                                <span className="ml-2">@{application.username}</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="space-y-2">
+                                                            <div className="flex items-center text-gray-600">
+                                                                <span className="font-medium">🏢 Department:</span>
+                                                                <span className="ml-2">{application.department || 'Not specified'}</span>
+                                                            </div>
+                                                            <div className="flex items-center text-gray-600">
+                                                                <span className="font-medium">📅 Applied:</span>
+                                                                <span className="ml-2">
+                                                                    {application.submittedAt ? new Date(application.submittedAt).toLocaleDateString() : 'Unknown'}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="space-y-2">
+                                                            <div className="flex items-center text-gray-600">
+                                                                <span className="font-medium">👥 Submitted by:</span>
+                                                                <span className="ml-2">{application.submittedByHR || 'Unknown'}</span>
+                                                            </div>
+                                                            <div className="flex items-center text-gray-600">
+                                                                <span className="font-medium">🆔 ID:</span>
+                                                                <span className="ml-2">#{application.id}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Notes Section */}
+                                                    {application.notes && (
+                                                        <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                                                            <span className="font-medium text-gray-700">📝 Notes:</span>
+                                                            <p className="text-gray-600 mt-1">{application.notes}</p>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Review Notes (if any) */}
+                                                    {application.rejectionReason && (
+                                                        <div className="mt-3 p-3 bg-red-50 rounded-lg">
+                                                            <span className="font-medium text-red-700">❌ Rejection Reason:</span>
+                                                            <p className="text-red-600 mt-1">{application.rejectionReason}</p>
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                {/* Action Buttons */}
+                                                <div className="flex flex-col space-y-2 lg:ml-4">
+                                                    {(application.status === 'PENDING' || application.status?.toString().toUpperCase() === 'PENDING') ? (
+                                                        <>
+                                                            <Button
+                                                                size="sm"
+                                                                className="bg-emerald-600 hover:bg-emerald-700 text-white min-w-[100px]"
+                                                                onClick={() => handleApprove(application.id)}
+                                                            >
+                                                                ✅ Approve
+                                                            </Button>
+                                                            <Button
+                                                                size="sm"
+                                                                variant="outline"
+                                                                className="border-red-300 text-red-600 hover:bg-red-50 min-w-[100px]"
+                                                                onClick={() => handleReject(application.id)}
+                                                            >
+                                                                ❌ Reject
+                                                            </Button>
+                                                        </>
+                                                    ) : (
+                                                        <span className="text-sm text-gray-500 italic px-4 py-2 bg-gray-100 rounded-md text-center">
+                                                            📋 Already reviewed
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </>
+                )}
+
+                {/* Analytics Tab Content */}
+                {activeTab === "analytics" && (
+                    <div className="bg-white/90 backdrop-blur-sm rounded-lg">
+                        <AnalyticsComponent />
+                    </div>
+                )}
             </div>
         </div>
     )

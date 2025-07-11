@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8080/api/v1';
+const API_BASE_URL = 'http://localhost:8081/api/v1';
 
 const api = axios.create({
     baseURL: API_BASE_URL,
@@ -73,6 +73,19 @@ export const login = async (username, password) => {
     const credentials = { username, password };
     const response = await api.post('/auth/authenticate', credentials);
     return response.data;
+};
+
+export const analyticsAPI = {
+    generateAiResponse: async (notes, department, jobTitle) => {
+        const response = await api.get('/analytics/ai/generate-response', {
+            params: {
+                notes,
+                department,
+                jobTitle
+            }
+        });
+        return response.data;
+    }
 };
 
 export const hrAPI = {

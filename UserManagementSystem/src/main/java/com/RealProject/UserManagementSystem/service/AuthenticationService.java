@@ -44,17 +44,31 @@ public class AuthenticationService {
         }
 
         public AuthenticationResponse authenticate(AuthenticationRequest request) {
-                authenticationManager
-                                .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(),
-                                                request.getPassword()));
+                System.out.println("Authentication attempt for username: " + request.getUsername());
 
-                User user = repository.findByUsername(request.getUsername()).orElseThrow();
-                String jwtToken = jwtService.generateToken(user);
-                return AuthenticationResponse.builder()
-                                .accessToken(jwtToken)
-                                .tokenType("Bearer")
-                                .user(UserMapper.userToDTO(user))
-                                .build();
+                try {
+                        authenticationManager
+                                        .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(),
+                                                        request.getPassword()));
+
+                        System.out.println("Authentication successful for: " + request.getUsername());
+
+                        User user = repository.findByUsername(request.getUsername()).orElseThrow();
+                        System.out.println("User found: " + user.getUsername() + ", Role: " + user.getRole());
+
+                        String jwtToken = jwtService.generateToken(user);
+                        System.out.println("JWT token generated successfully");
+
+                        return AuthenticationResponse.builder()
+                                        .accessToken(jwtToken)
+                                        .tokenType("Bearer")
+                                        .user(UserMapper.userToDTO(user))
+                                        .build();
+                } catch (Exception e) {
+                        System.err.println("Authentication failed for: " + request.getUsername() + ", Error: "
+                                        + e.getMessage());
+                        throw e;
+                }
         }
 
 }

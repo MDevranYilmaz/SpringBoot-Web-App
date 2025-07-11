@@ -33,7 +33,15 @@ public class AuthenticationController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
-        return ResponseEntity.ok(service.authenticate(request));
+        System.out.println("Received authentication request for username: " + request.getUsername());
+        try {
+            AuthenticationResponse response = service.authenticate(request);
+            System.out.println("Authentication successful, returning response");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            System.err.println("Authentication controller error: " + e.getMessage());
+            throw e;
+        }
     }
 
     @PostMapping("/forgot-password")
