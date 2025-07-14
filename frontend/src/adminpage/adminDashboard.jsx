@@ -17,7 +17,7 @@ const AdminDashboard = () => {
         const fetchApplications = async () => {
             try {
                 const token = localStorage.getItem('authToken');
-                const response = await fetch("http://localhost:8080/api/gateway/hr/admin/all-applications", {
+                const response = await fetch("http://localhost:8081/api/hr/admin/all-applications", {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -44,7 +44,7 @@ const AdminDashboard = () => {
     const handleApprove = async (id) => {
         try {
             const token = localStorage.getItem('authToken');
-            const response = await fetch("http://localhost:8080/api/gateway/hr/admin/review-application", {
+            const response = await fetch("http://localhost:8081/api/hr/admin/review-application", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -70,7 +70,7 @@ const AdminDashboard = () => {
     const handleReject = async (id) => {
         try {
             const token = localStorage.getItem('authToken');
-            const response = await fetch("http://localhost:8080/api/gateway/hr/admin/review-application", {
+            const response = await fetch("http://localhost:8081/api/hr/admin/review-application", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -210,8 +210,8 @@ const AdminDashboard = () => {
                             <button
                                 onClick={() => setActiveTab("applications")}
                                 className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === "applications"
-                                        ? "border-emerald-500 text-emerald-600"
-                                        : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                    ? "border-emerald-500 text-emerald-600"
+                                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                                     }`}
                             >
                                 <Users className="w-4 h-4 inline mr-2" />
@@ -220,8 +220,8 @@ const AdminDashboard = () => {
                             <button
                                 onClick={() => setActiveTab("analytics")}
                                 className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === "analytics"
-                                        ? "border-emerald-500 text-emerald-600"
-                                        : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                    ? "border-emerald-500 text-emerald-600"
+                                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                                     }`}
                             >
                                 <BarChart3 className="w-4 h-4 inline mr-2" />
