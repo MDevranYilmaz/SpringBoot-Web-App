@@ -41,7 +41,7 @@ export default function HRDashboard() {
         loadApplications();
     }, []);
 
-    // Load applications based on user role
+    // In hrDashboard.jsx, update the loadApplications function:
     const loadApplications = async () => {
         try {
             setLoading(true);
@@ -52,9 +52,9 @@ export default function HRDashboard() {
 
             // Check if user is admin or HR
             if (user?.role === 'ADMIN') {
-                applications = await hrAPI.getPendingApplications();
+                applications = await hrAPI.getAllApplications(); // Use getAllApplications for admin
             } else {
-                applications = await hrAPI.getMyApplications();
+                applications = await hrAPI.getMyApplications(); // Use getMyApplications for HR
             }
 
             setApplicants(applications);

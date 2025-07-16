@@ -17,7 +17,8 @@ const AdminDashboard = () => {
         const fetchApplications = async () => {
             try {
                 const token = localStorage.getItem('authToken');
-                const response = await fetch("http://localhost:8081/api/hr/admin/all-applications", {
+                // Updated URL to use gateway service
+                const response = await fetch("http://localhost:8081/api/v1/hr/admin/all-applications", {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -44,7 +45,8 @@ const AdminDashboard = () => {
     const handleApprove = async (id) => {
         try {
             const token = localStorage.getItem('authToken');
-            const response = await fetch("http://localhost:8081/api/hr/admin/review-application", {
+            // Updated URL to use gateway service
+            const response = await fetch("http://localhost:8081/api/v1/hr/admin/review-application", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -70,7 +72,8 @@ const AdminDashboard = () => {
     const handleReject = async (id) => {
         try {
             const token = localStorage.getItem('authToken');
-            const response = await fetch("http://localhost:8081/api/hr/admin/review-application", {
+            // Updated URL to use gateway service
+            const response = await fetch("http://localhost:8081/api/v1/hr/admin/review-application", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

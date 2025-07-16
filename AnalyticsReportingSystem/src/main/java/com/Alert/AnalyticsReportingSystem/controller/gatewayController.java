@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 @RestController
-@RequestMapping("/api/gateway")
+@RequestMapping("/api/v1/gateway")
 public class gatewayController {
 
     @Autowired
@@ -86,6 +86,21 @@ public class gatewayController {
         HttpEntity<String> entity = new HttpEntity<>(request, headers);
 
         String url = userManagementBaseUrl + "/api/v1/hr/submit-application";
+        return restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+    }
+
+    // ADD THIS MISSING ENDPOINT
+    @PostMapping("/hr/admin/review-application")
+    public ResponseEntity<String> reviewApplication(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody String request) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", authHeader);
+        headers.set("Content-Type", "application/json");
+        HttpEntity<String> entity = new HttpEntity<>(request, headers);
+
+        String url = userManagementBaseUrl + "/api/v1/hr/admin/review-application";
         return restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
     }
 

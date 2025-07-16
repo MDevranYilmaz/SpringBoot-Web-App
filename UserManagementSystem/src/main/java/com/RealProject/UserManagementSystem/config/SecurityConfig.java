@@ -16,6 +16,8 @@ import com.RealProject.UserManagementSystem.security.JwtAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.Arrays;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
@@ -45,10 +47,25 @@ public class SecurityConfig {
         @Bean
         public CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration configuration = new CorsConfiguration();
-                configuration.addAllowedOriginPattern("*"); // Allow all origins
-                configuration.addAllowedMethod("*"); // Allow all HTTP methods
-                configuration.addAllowedHeader("*"); // Allow all headers
-                configuration.setAllowCredentials(true); // Allow credentials
+
+                // Allow specific origins instead of all
+                configuration.setAllowedOriginPatterns(Arrays.asList(
+                                "http://localhost:5173", // React app
+                                "http://localhost:8080", // Gateway service
+                                "http://localhost:8081" // Current service
+                ));
+
+                // Allow all HTTP methods
+                configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
+
+                // Allow all headers
+                configuration.setAllowedHeaders(Arrays.asList("*"));
+
+                // Allow credentials
+                configuration.setAllowCredentials(true);
+
+                // Expose headers that might be needed
+                configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type"));
 
                 UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
                 source.registerCorsConfiguration("/**", configuration);
